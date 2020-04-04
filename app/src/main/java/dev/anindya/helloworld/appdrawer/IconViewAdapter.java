@@ -74,6 +74,11 @@ public class IconViewAdapter extends RecyclerView.Adapter<IconViewAdapter.ViewHo
             //Finds the views from our row.xml
             mImageView = itemView.findViewById(R.id.iconImage);
 
+            //Set a grayscale filter for the icon.
+            final ColorMatrix matrix = new ColorMatrix();
+            matrix.setSaturation(0);
+            mImageView.setColorFilter(new ColorMatrixColorFilter(matrix));
+
             itemView.setOnClickListener(this);
         }
 
