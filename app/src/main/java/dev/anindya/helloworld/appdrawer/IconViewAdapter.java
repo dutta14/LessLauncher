@@ -51,7 +51,7 @@ public class IconViewAdapter extends RecyclerView.Adapter<IconViewAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder viewHolder, final int position) {
         //Here we use the information in the list we created to define the views
         viewHolder.setImage(mAppsList.get(position).getIcon());
     }
