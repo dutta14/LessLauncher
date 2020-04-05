@@ -50,6 +50,6 @@ class AppInfo implements Comparable<AppInfo> {
 
     @Override
     public int compareTo(@NonNull final AppInfo appInfo) {
-        return mLabel.toString().compareTo(appInfo.mLabel.toString());
+        return mLabel.toString().toLowerCase().compareTo(appInfo.mLabel.toString().toLowerCase());
     }
 }
