@@ -33,10 +33,7 @@ public class IconViewAdapter extends RecyclerView.Adapter<IconViewAdapter.ViewHo
 
         final PackageManager pm = context.getPackageManager();
         for (final ResolveInfo resolveInfo: pm.queryIntentActivities(intent, 0)) {
-            final AppInfo app = new AppInfo(resolveInfo.loadLabel(pm),
-                    resolveInfo.activityInfo.packageName,
-                    resolveInfo.activityInfo.loadIcon(pm));
-            mAppsList.add(app);
+            mAppsList.add(new AppInfo(resolveInfo, pm));
         }
         Collections.sort(mAppsList);
     }
