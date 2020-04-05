@@ -7,6 +7,7 @@ import android.content.pm.ResolveInfo;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,15 +28,7 @@ public class IconViewAdapter extends RecyclerView.Adapter<IconViewAdapter.ViewHo
 
     IconViewAdapter(@NonNull final Context context) {
         mAppsList = new ArrayList<>();
-
-        final Intent intent = new Intent(Intent.ACTION_MAIN, null);
-        intent.addCategory(Intent.CATEGORY_LAUNCHER);
-
-        final PackageManager pm = context.getPackageManager();
-        for (final ResolveInfo resolveInfo: pm.queryIntentActivities(intent, 0)) {
-            mAppsList.add(new AppInfo(resolveInfo, pm));
-        }
-        Collections.sort(mAppsList);
+        new AppsLoader(context).execute();
     }
 
     @NonNull
@@ -56,6 +49,10 @@ public class IconViewAdapter extends RecyclerView.Adapter<IconViewAdapter.ViewHo
     @Override
     public int getItemCount() {
         return mAppsList.size();
+    }
+
+    private void updateList() {
+        notifyDataSetChanged();
     }
 
     /**
@@ -91,6 +88,41 @@ public class IconViewAdapter extends RecyclerView.Adapter<IconViewAdapter.ViewHo
 
         void setImage(@NonNull final Drawable drawable) {
             mImageView.setImageDrawable(drawable);
+        }
+    }
+
+    private class AppsLoader extends AsyncTask<Void, Void, Void> {
+
+        private final Context mContext;
+
+        private AppsLoader(@NonNull final Context context) {
+            mContext = context;
+        }
+
+        @Override
+        protected Void doInBackground(@NonNull final Void... voids) {
+            final Intent intent = new Intent(Intent.ACTION_MAIN, null);
+            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+
+            final PackageManager pm = mContext.getPackageManager();
+            for (final ResolveInfo resolveInfo: pm.queryIntentActivities(intent, 0)) {
+                mAppsList.add(new AppInfo(resolveInfo, pm));
+                publishProgress();
+            }
+            Collections.sort(mAppsList);
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(@NonNull final Void... values) {
+            super.onProgressUpdate(values);
+            updateList();
+        }
+
+        @Override
+        protected void onPostExecute(@NonNull final Void ignored) {
+            super.onPostExecute(ignored);
+            updateList();
         }
     }
 }
