@@ -1,5 +1,9 @@
 package dev.anindya.helloworld.appdrawer;
 
+import static android.content.Intent.ACTION_PACKAGE_ADDED;
+import static android.content.Intent.ACTION_PACKAGE_REMOVED;
+
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -124,5 +128,26 @@ public class IconViewAdapter extends RecyclerView.Adapter<IconViewAdapter.ViewHo
             super.onPostExecute(ignored);
             updateList();
         }
+    }
+
+    class AppListenerBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(@NonNull final Context context, @NonNull final Intent intent) {
+            if (intent.getAction() != null) {
+                switch (intent.getAction()) {
+                    case ACTION_PACKAGE_ADDED:
+                    case ACTION_PACKAGE_REMOVED:
+                        trackPackageChanged(context);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
+    private void trackPackageChanged(@NonNull final Context context) {
+        new AppsLoader(context).execute();
+        updateList();
     }
 }
